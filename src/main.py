@@ -69,9 +69,10 @@ for metrics in ["test_micro_f1" , "test_macro_f1", "test_acc"]:
     print(metrics, ":", scores[metrics].mean())
 
 
+random_state = 42
 
 # Baseline Aleatoire
-rand_baseline = DummyClassifier(strategy="uniform", random_state=42)
+rand_baseline = DummyClassifier(strategy="uniform", random_state=random_state)
 scores = cross_validate(
     rand_baseline, X, y,
     scoring={"micro_f1":"f1_micro", "macro_f1":"f1_macro", "acc":"accuracy"}
@@ -80,3 +81,52 @@ scores = cross_validate(
 print("\nBaseline aléatoire:")
 for m in ["test_micro_f1","test_macro_f1","test_acc"]:
     print(m, scores[m].mean())
+
+
+
+# Méthode A:
+
+# Représentation sac de mots : TF-IDF
+# Unités : unigrammes (ngram_range=(1,1))
+# Classifieur : Naive Bayes (en pratique MultinomialNB)
+
+
+from sklearn.pipeline import Pipeline
+from sklearn.model_selection import StratifiedKFold, cross_validate, cross_val_predict
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.naive_bayes import MultinomialNB
+from sklearn.metrics import classification_report, confusion_matrix
+
+
+cv = StratifiedKFold(n_splits=5, shuffle=True, random_state=random_state)
+
+# Méthode A : TF-IDF unigrammes + Naïve Bayes
+runA = Pipeline([
+    ("tfidf", TfidfVectorizer(
+        lowercase=True,
+        ngram_range=(1, 1),   # unigrammes
+        min_df=2              # ignore mots trop rares (tu peux tester 1 ou 2)
+    )),
+    ("clf", MultinomialNB(alpha=1.0))  # alpha = lissage de Laplace (testable)
+])
+
+scores = cross_validate(
+    runA, X, y, cv=cv,
+    scoring={"micro_f1": "f1_micro", "macro_f1": "f1_macro", "acc": "accuracy"}
+)
+
+print("\n=== Run A (TF-IDF unigrammes + MultinomialNB) ===")
+print("micro-F1 :", scores["test_micro_f1"].mean())
+print("macro-F1 :", scores["test_macro_f1"].mean())
+print("accuracy :", scores["test_acc"].mean())
+
+# 2) Rapport détaillé + matrice de confusion (sur prédictions CV)
+y_pred = cross_val_predict(runA, X, y, cv=cv)
+
+print("\n Classification report (CV) ")
+print(classification_report(y, y_pred, digits=3))
+
+labels = sorted(y.unique())
+cm = confusion_matrix(y, y_pred, labels=labels)
+print("\n Matrice de confusion ( ", labels, ") ")
+print(cm)
