@@ -74,3 +74,20 @@ scores = cross_validate(
 print("Baseline par classe majoritaire:")
 for metrics in ["test_micro_f1" , "test_macro_f1", "test_acc"]:
     print(metrics, ":", scores[metrics].mean())
+
+
+#basline 1 : aléatoire 
+
+#on garde le meme découpage en fold pour pouvoir comparer les scores.
+cross_validation = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
+# faux modèle qui va faire des prédictions aléatoires
+baseline_random = DummyClassifier(strategy="uniform" , random_state=42)
+
+scores_random = cross_validate(
+    baseline_random, X, y, cv=cross_validation,
+    scoring={"micro_f1":"f1_micro", "macro_f1":"f1_macro ", "acc":"accuracy"}
+)
+
+print("\nBaseline aléatoire:")
+for metrics in ["test_micro_f1" , "test_macro_f1", "test_acc"]:
+    print(metrics, ":", scores_random[metrics].mean())
