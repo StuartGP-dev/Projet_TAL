@@ -1,12 +1,4 @@
 test/*
 /.vscode/*
-__pycache__/*
-*.pyc
-*.pyo
-*.pyd
-*.db
-*.sqlite
-*.log
-*.bak
-*.tmp
-*.swp           
+
+         
