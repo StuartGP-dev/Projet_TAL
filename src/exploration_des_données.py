@@ -34,3 +34,17 @@ print(" Analyse du déséquilibre")
 print("Ratio max/min =", counts.max() / counts.min() )
 
 """La classe la plus grande (“Plat principal”) est environ 2 fois la plus petite (“Entrée”)."""
+
+methode_B = Pipeline([
+    ("tfidf", TfidfVectorizer(ngram_range=(1, 2), min_df=2, max_df=0.95)),
+    ("clf", LinearSVC())
+])
+
+scores_B = cross_validate(
+    methode_B, X, y, cv=cv,
+    scoring={"micro_f1":"f1_micro", "macro_f1":"f1_macro", "acc":"accuracy"}
+)
+
+print("\nMéthode B (TF-IDF 1-2 grams + LinearSVC):")
+for m in ["test_micro_f1", "test_macro_f1", "test_acc"]:
+    print(m, scores_B[m].mean())
