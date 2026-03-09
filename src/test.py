@@ -73,9 +73,9 @@ for metrics in ["test_micro_f1" , "test_macro_f1", "test_acc"]:
     print(metrics, ":", scores[metrics].mean())
 
 
+# Baseline Aleatoire
 random_state = 42
 
-# Baseline Aleatoire
 rand_baseline = DummyClassifier(strategy="uniform", random_state=random_state)
 scores = cross_validate(
     rand_baseline, X, y,
@@ -85,7 +85,6 @@ scores = cross_validate(
 print("\nBaseline aléatoire:")
 for m in ["test_micro_f1","test_macro_f1","test_acc"]:
     print(m, scores[m].mean())
-<<<<<<< HEAD
 
 
 
@@ -135,6 +134,3 @@ labels = sorted(y.unique())
 cm = confusion_matrix(y, y_pred, labels=labels)
 print("\n Matrice de confusion ( ", labels, ") ")
 print(cm)
-=======
-    
->>>>>>> 5299dcb ( méthode A et B)
