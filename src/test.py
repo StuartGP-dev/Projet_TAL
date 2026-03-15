@@ -134,3 +134,78 @@ labels = sorted(y.unique())
 cm = confusion_matrix(y, y_pred, labels=labels)
 print("\n Matrice de confusion ( ", labels, ") ")
 print(cm)
+
+
+
+# Méthode C temp
+
+
+import numpy as np
+from sklearn.compose import ColumnTransformer
+from sklearn.preprocessing import FunctionTransformer, StandardScaler
+from sklearn.impute import SimpleImputer
+
+
+sweet_words = [
+    "sucre", "sucré", "chocolat", "vanille", "miel", "caramel",
+    "pomme", "poire", "banane", "fraise", "framboise", "citron",
+    "confiture", "gâteau", "biscuit", "crème", "dessert"
+]
+
+salty_words = [
+    "sel", "salé", "poivre", "fromage", "jambon", "poulet", "boeuf",
+    "thon", "saumon", "oeuf", "riz", "pâtes", "oignon", "ail",
+    "soupe", "gratin", "sauce"
+]
+
+for df in (train, test):
+    # longueur du texte
+    df["text_len"] = df["text"].fillna("").str.split().apply(len)
+
+    # nombre d’ingrédients
+    # ici on approxime par le nombre de mots dans la colonne ingredients
+    df["nb_ingredients"] = df["ingredients"].fillna("").str.split().apply(len)
+
+    # présence de termes sucrés / salés
+    low_text = df["text"].fillna("").str.lower()
+
+    df["has_sweet"] = low_text.apply(
+        lambda x: int(any(word in x for word in sweet_words))
+    )
+    df["has_salty"] = low_text.apply(
+        lambda x: int(any(word in x for word in salty_words))
+    )
+
+
+
+
+X_enriched = train[["text", "text_len", "nb_ingredients", "has_sweet", "has_salty"]]
+y = train["type"]
+
+
+
+preprocessor = ColumnTransformer(
+    transformers=[
+        ("tfidf", TfidfVectorizer(lowercase=True, ngram_range=(1, 2), min_df=2), "text"),
+        ("num", Pipeline([
+            ("imputer", SimpleImputer(strategy="constant", fill_value=0)),
+            ("scaler", StandardScaler())
+        ]), ["text_len", "nb_ingredients", "has_sweet", "has_salty"])
+    ]
+)
+
+runC = Pipeline([
+    ("features", preprocessor),
+    ("clf", LogisticRegression(max_iter=1000, random_state=random_state))
+])
+
+
+results_C_temp = evaluate_model(
+    "Run C temp (TF-IDF + features linguistiques + Logistic Regression)",
+    runC,
+    X_enriched,
+    y,
+    cv
+)
+
+results.append(results_C_temp)
