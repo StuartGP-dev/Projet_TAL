@@ -1,7 +1,7 @@
 # DEFT2013 Tâche 2 : NOMEQUIPE (optionnel)
 
 
-NOM Prenom - NOM Prenom
+Dabin Yanis - Mhabrech Ilef 
 
 
 ## Description de la tâche
@@ -54,9 +54,7 @@ Afin de garantir la comparabilité des résultats, nous avons respecté le proto
 - Le découpage train/test fourni a été respecté
 - Le jeu de test n’a jamais été utilisé pour l’entraînement
 - Toutes les expériences utilisent le même protocole
-- random_state fixé à 42 pour garantir la reproductibilité
-
----- 
+- random_state fixé à 42 pour garantir la reproductibilité 
 
 ## Statistiques corpus
 
@@ -81,9 +79,13 @@ Pour mieux comprendre les données avant modélisation
 | Dessert        | 30.2 %    | 29.3 %   |
 | Entrée         | 23.3 %    | 24.3 %   |
 
+
+### Visualisation
+
+![Répartition des classes](figure/proportion_classes_train_test.png)
+
 Observation :  
 - **déséquilibre des classes : les plats principals sont majoritaires**
-
 ---
 
 ### Statistiques des longueurs (mots)
@@ -94,9 +96,21 @@ Observation :
 | recette     | 123     | 9   | 1334 |
 | texte total | 176     | 25  | -   |
 
+
+### Distribution des longueurs
+
+#### Texte complet
+![Longueur textes](figure/longueur_textes_hist_par_classe.png)
+
+#### Recettes
+![Longueur recettes](figure/longueur_recettes_hist_par_classe.png)
+
+#### Ingrédients
+![Longueur ingrédients](figure/longueur_ingredients_hist_par_classe.png)
+
 Observations :
 - Les recettes sont en moyenne **assez longues (~176 mots)**
-- Forte **variabilité** 
+- Forte **variabilité**
 
 ---
 
@@ -140,6 +154,10 @@ Exemples :
 
  Conclusion :  
 Les plats principaux sont associés à des **viandes, plats chauds et plats complets**, avec un vocabulaire riche mais plus varié.
+
+### Visualisation des mots spécifiques
+
+![Spécificités lexicales](figure/specificites_lexicales_par_classe.png)
 
 ### interprétations : 
 - Les desserts sont les plus faciles à classifier (vocabulaire très spécifique)
@@ -206,6 +224,10 @@ titre + ingrédients + recette
 
 Conclusion :  
 Le texte complet est la meilleure représentation.
+
+### Impact du champ utilisé
+
+![Comparaison champs](figure/comparaison_champs.png)
 
 ---
 
@@ -342,7 +364,6 @@ Conclusion :
 - Les **n-grammes apportent du contexte**  
 - Bon compromis global
 
-
 ###  Méthode B (variante) : TF-IDF + SVM (LinearSVC)
 
 **Description :**
@@ -357,6 +378,20 @@ Conclusion :
 - Meilleur modèle global
 - Très bonnes performances sur toutes les classes
 - Réduction des erreurs entre Entrée et Plat
+
+### Matrice de confusion
+
+La matrice de confusion suivante montre les performances du modèle SVM :
+
+![Matrice brute](figure/matrice_confusion_runB_svm.png)
+
+![Matrice normalisée](figure/matrice_confusion_normalisee_runB_svm.png)
+
+### F1-score par classe
+
+La figure suivante montre les performances détaillées par classe :
+
+![F1-score](figure/f1_par_classe_runB_svm.png)
 
  Conclusion :  
 - Le SVM est le **meilleur modèle parmi ceux testés**
@@ -391,6 +426,13 @@ Conclusion :
 | SVM (LinearSVC)            | 0.878     | 0.868     |
 | Modèle enrichi             | 0.869     | 0.860     |
 
+### visualisation : 
+
+
+![Comparaison méthodes](figure/comparaison_methodes.png)
+
+
+observation : 
 - Les modèles linéaires (Logistic Regression, SVM) sont **nettement meilleurs**
 - Le passage aux **n-grammes améliore les performances**
 - Le SVM donne les meilleurs résultats globaux
@@ -411,6 +453,10 @@ Conclusion :
 | SVM (LinearSVC) | **0.878** | **0.868** | **0.878** |
 | Modèle enrichi | 0.869 | 0.860 | 0.869 |
 | Modèle enrichi + longueurs | 0.867 | 0.858 | 0.867 |
+
+#### visualisation : 
+
+![Comparaison méthodes](figure/comparaison_des_methodes_globales.png)
 
 
 ### interprétations : 
@@ -466,7 +512,7 @@ Ce projet montre que :
 - les approches classiques (TF-IDF + modèles linéaires) sont **très efficaces**
 - le principal défi n’est pas technique, mais **lié aux données (ambiguïté, similarité des classes)**
 
-➡️ Le meilleur modèle obtenu (SVM) atteint des performances élevées (~0.88),  
+ Le meilleur modèle obtenu (SVM) atteint des performances élevées (~0.88),  
 ce qui confirme la **pertinence des méthodes utilisées**.
 
 ---
