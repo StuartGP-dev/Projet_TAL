@@ -1,6 +1,6 @@
-# DEFT2013 Tâche 2 :
+# DEFT2013 Tâche 2
 
-Dabin Yanis - Mhabrech Ilef
+**Dabin Yanis** — **Mhabrech Ilef**
 
 ## Description de la tâche
 
@@ -45,7 +45,6 @@ Ce choix est motivé par le fait que ce sont les champs les plus informatifs pou
 - Entrées : Titre, Ingrédients, Recette
 - Sortie : Type de la recette (Entrée / Plat principal / Dessert)
 
----
 
 ## Installation et exécution
 
@@ -57,12 +56,7 @@ pip install -r requirements.txt
 
 ### Exécution
 
-```bash
-cd src
-jupyter notebook
-```
-
-Une fois Jupyter Notebook lancé, ouvrir le notebook du projet puis exécuter toutes les cellules dans l’ordre pour reproduire les expériences, les tableaux et les figures.
+Se placer dans le dossier `src`, lancer Jupyter Notebook, puis ouvrir le notebook du projet et exécuter toutes les cellules dans l’ordre pour reproduire les expériences, les tableaux et les figures.
 
 ---
 
@@ -127,7 +121,6 @@ Les résultats montrent surtout que les desserts possèdent le vocabulaire le pl
 
 Cette analyse confirme que les desserts sont les plus faciles à classifier, tandis que la principale difficulté du problème vient de la proximité lexicale entre Entrée et Plat principal.
 
----
 
 ## Choix de la représentation textuelle
 
@@ -394,25 +387,48 @@ On remarque surtout que les mots associés à Dessert ont des ratios de spécifi
 
 Cette méthode fonctionne particulièrement bien sur Dessert, car cette classe possède un vocabulaire très spécifique, mais elle reste plus en difficulté sur la séparation entre Entrée et Plat principal, qui partagent un lexique plus proche.
 
----
 
 ## Réflexion critique sur le projet
 
-	Pistes d'analyse:
+### La tâche est-elle bien définie ?
 
-	* La tâche est-elle bien définie ?
+Oui, dans l’ensemble la tâche est bien définie. On sait exactement ce qu’on donne au modèle en entrée, le titre, les ingrédients et la recette, et ce qu’on attend en sortie, une seule classe parmi Entrée, Plat principal et Dessert. D’un point de vue informatique, le problème est donc clair et facile à formuler comme une classification supervisée.
 
-Oui la tach est bien définie
+En revanche, même si la tâche est bien définie sur le papier, elle l’est un peu moins dans la réalité. Les catégories ne sont pas toujours totalement nettes, surtout entre Entrée et Plat principal. Donc la consigne est claire, mais les données qu’elle cherche à modéliser ne le sont pas toujours parfaitement.
 
-	* Une recette peut-elle appartenir à plusieurs catégories ?
-Dans le corpus, une recette appartient bien qu'a une seule catégorie. Mais dans le monde réél, une recette peut être considéré comme une entrée ou comme un plat (par exemple une salade), cela est subjectif en fonction de la personne.
+### Une recette peut-elle appartenir à plusieurs catégories ?
 
-	* Les classes sont-elles naturellement séparables ?
-Non les classes ne sont pas naturellement séparables, comme on l'a vue dans nos expériences la barrière entre Entrée et Plat est souvent fine. On pourrait faire une analyse des données plus précise avec une représentation par nuage de point. On verrait clairement qu'il n'y a pas de droite pour séparer clairement les classes.
+Dans le corpus, non. Chaque recette appartient à une seule catégorie, puisque c’est le principe même de l’annotation utilisée pour entraîner les modèles.
 
-	* La macro-F1 est-elle la meilleure métrique ?
-La macro F1 s'avère très pertinente dans notre expèriences puisqu'ici les données n'ont pas un nombre similaire entre les 3 classes, de plus chacune d'entre elle merite de peser autant que les autres.
-Le micro F1 reste tout de meme interessant en complémentaire pour évaluer l'efficacité du modele.
+Mais dans le monde réel, oui, cela peut arriver. Certaines recettes peuvent être considérées comme une entrée ou comme un plat selon le contexte, la portion, ou simplement selon la personne qui les juge. Une salade composée, une quiche ou un feuilleté peuvent très bien être servis comme entrée dans un repas, ou comme plat principal dans un autre. Il y a donc une part de subjectivité qui dépasse le cadre strict du jeu de données.
 
-	* Vos modèles généralisent-ils réellement ?
-Il faudrait tester sur d'autres jeu de test afin de s'assurer de l'efficacité de nos modeles. 
+C’est important à souligner, parce que cela veut dire que certaines erreurs du modèle ne viennent pas forcément d’un mauvais apprentissage, mais du fait que la frontière entre les classes est parfois floue dès le départ.
+
+### Les classes sont-elles naturellement séparables ?
+
+Non, elles ne sont pas naturellement séparables. C’est quelque chose qu’on a clairement observé dans nos expériences. La classe Dessert se distingue assez facilement, car elle possède un vocabulaire très spécifique, souvent lié au sucre, à la pâtisserie ou aux préparations sucrées.
+
+En revanche, la frontière entre Entrée et Plat principal est beaucoup plus fine. Ce sont deux classes qui partagent beaucoup d’ingrédients, de formulations et de structures de recettes. C’est d’ailleurs là que se concentrent la majorité des erreurs de classification.
+
+On pourrait pousser cette réflexion avec une représentation visuelle des données, par exemple un nuage de points après réduction de dimension. On verrait probablement que les recettes Entrée et Plat principal se recouvrent en partie, ce qui confirme qu’il n’existe pas de séparation simple et évidente entre elles.
+
+### La macro-F1 est-elle la meilleure métrique ?
+
+Oui, dans notre cas la macro-F1 est la métrique la plus pertinente. Les trois classes ne sont pas représentées en proportions égales dans le corpus, donc il est important d’utiliser une mesure qui donne le même poids à chacune d’elles.
+
+La macro-F1 permet justement de ne pas favoriser artificiellement la classe majoritaire. Elle reflète mieux la capacité du modèle à bien traiter toutes les catégories, y compris celles qui sont plus difficiles ou moins fréquentes. Dans notre projet, c’est particulièrement utile, car un modèle peut sembler bon en score global tout en restant faible sur la classe Entrée.
+
+Le micro-F1 reste quand même intéressant en complément, car il permet d’évaluer l’efficacité globale du modèle. Mais à lui seul, il ne suffit pas pour juger finement la qualité des résultats. C’est donc vraiment la macro-F1 qui nous semble la plus adaptée pour comparer les méthodes de manière équilibrée.
+
+### Vos modèles généralisent-ils réellement ?
+
+Ils généralisent correctement sur le jeu de test fourni, puisqu’ils obtiennent de bons résultats sur des données non vues pendant l’entraînement. Cela montre qu’ils apprennent bien des régularités utiles dans le corpus.
+
+Mais il faut rester prudent. Le fait qu’un modèle fonctionne bien sur ce jeu de test ne garantit pas qu’il fonctionnerait aussi bien sur d’autres recettes venant d’autres sources, avec d’autres styles d’écriture ou d’autres choix d’annotation. Pour affirmer qu’il généralise réellement, il faudrait le tester sur d’autres jeux de données.
+
+
+### Bilan personnel
+
+Au final, ce projet nous a montré qu’une tâche de classification peut être bien définie d’un point de vue technique, tout en restant imparfaite d’un point de vue humain. La difficulté principale ne vient pas seulement du choix du modèle, mais aussi du fait que certaines recettes sont ambiguës par nature. C’est particulièrement vrai pour la distinction entre Entrée et Plat principal.
+
+Cela explique pourquoi même les meilleurs modèles restent limités sur certains cas. Ce projet nous a donc appris non seulement à comparer des méthodes de classification, mais aussi à prendre du recul sur les données, les métriques et les limites réelles du problème.
